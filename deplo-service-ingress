@@ -1,0 +1,54 @@
+# cest la partie deployment du code 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zahralova-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: site_web
+  template:
+    metadata:
+      labels:
+        app: site_web
+    spec:
+      containers:
+        - name: zahralova-site
+          image: rootroot23/zahralova # c'est mon image que j'ai deposé sur dockerhub
+          ports:
+            - containerPort: 80
+---
+# creation du service nommé 'zahra-service' 
+apiVersion: v1
+kind: Service
+metadata:
+  name: zahra-service
+spec:
+  selector:
+    app: site_web
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+--- 
+# crestion de ingress. ici j'ai utilisé inginx controller  
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zahra-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx # j'utilise inclassClassName par default
+  rules:
+   - host: zahralova.fr # ici je declare  le nom de domaine
+     http:
+      paths:
+       - path: /
+         pathType: Prefix
+         backend: # ici la parie backensd sert à exposer le service qui en haut ==> zahra service
+           service:
+             name: zahra-service
+            port:
+            number: 80
