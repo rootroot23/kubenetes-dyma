@@ -44,7 +44,7 @@ spec:
   rules:
    - host: zahralova.fr # ici je declare  le nom de domaine
      http:
-      paths:
+      paths: 
        - path: /
          pathType: Prefix
          backend: # ici la parie backensd sert à exposer le service qui en haut ==> zahra service
