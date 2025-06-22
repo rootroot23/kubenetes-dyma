@@ -45,8 +45,8 @@ spec:
     apiVersion:  apps/v1
     kind: Deployment
     name: nginx # cest le nom du deployment
-  minReplicas: 1 # ici c'est le nombre minim de replicas
-  maxReplicas: 10 # ici c'est le nombre maximum de replicas
+  minReplicas: 1 # ici c'est le nombre minim de replicas, pod
+  maxReplicas: 10 # ici c'est le nombre maximum de replicas, de pod
   metrics:
   - type: Resource
     resource:
