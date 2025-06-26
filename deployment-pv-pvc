@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zahralova-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: site_web
+  template:
+    metadata:
+      labels:
+        app: site_web
+    spec:
+      containers:
+        - name: zahralova-site
+          image: rootroot23/zahralova
+          ports:
+            - containerPort: 80
+          volumeMounts:                               #ici la montée du volume dans le container 
+            - name: lova-volume
+              mountPath: /data/
+      volumes: #ici c'est la declaration du volume
+        - name: lova-volume
+          persistentVolumeClaim:                        # precise le type de volume 
+            claimName: zahra-pvc
+---
+apiVersion: v1                           # creation de pv 
+kind: PersistentVolume
+metadata:
+  name: zahra-pv
+spec:
+  capacity:
+    storage: 5Gi                         #ici c'est la capacité de staoclagage ==> 5 giggas
+  volumeMode: Filesystem
+  accessModes:                           # le mode d'access au volume
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: manual                 # le nom de storage est libre
+  hostPath:                                # là où le volume sera stocké sur la machine
+    path: /data/  
+---
+apiVersion: v1
+kind: PersistentVolumeClaim                # creation de pvc 
+metadata:
+  name: zahra-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 3Gi                     #la quantité de volume demandée par pvc sur pv
+  storageClassName: manual              # le pv et pvc doit utiliser le même nom de storageClassName
